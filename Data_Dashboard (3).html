@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>Data Dashboard</h1>
+    <label for="model-select">Select Model:</label>
+    <select id="model-select" onchange="updatePlot()">
+        <option value="linear">Linear Regression</option>
+        <option value="logistic">Logistic Regression</option>
+        <option value="tree">Decision Tree</option>
+    </select>
+
+    <div id="plot"></div>
+
+    <script>
+        // Sample Data
+        const X = Array.from({ length: 100 }, () => Math.random() * 10);
+        const y_linear = X.map(x => 2.5 * x + Math.random());
+        const y_logistic = y_linear.map(y => y > 15 ? 1 : 0);
+        const y_tree = [...y_logistic];
+
+        // Predictions (Simulated for illustration)
+        const linear_pred = X.map(x => 2.5 * x);
+        const logistic_pred = y_logistic.map(y => Math.random()); // Dummy probabilities
+        const tree_pred = [...y_tree];
+
+        // Function to update the plot
+        function updatePlot() {
+            const model = document.getElementById("model-select").value;
+            let data = [];
+            let layout = {};
+
+            if (model === "linear") {
+                data = [
+                    { x: X, y: y_linear, mode: 'markers', name: 'Actual', type: 'scatter' },
+                    { x: X, y: linear_pred, mode: 'lines', name: 'Predicted', type: 'scatter' }
+                ];
+                layout = { title: 'Linear Regression', xaxis: { title: 'X' }, yaxis: { title: 'y' } };
+            } else if (model === "logistic") {
+                data = [
+                    { x: X, y: y_logistic, mode: 'markers', name: 'Actual', type: 'scatter' },
+                    { x: X, y: logistic_pred, mode: 'lines', name: 'Predicted Probability', type: 'scatter' }
+                ];
+                layout = { title: 'Logistic Regression', xaxis: { title: 'X' }, yaxis: { title: 'Probability' } };
+            } else if (model === "tree") {
+                data = [
+                    { x: X, y: y_tree, mode: 'markers', name: 'Actual', type: 'scatter' },
+                    { x: X, y: tree_pred, mode: 'lines', name: 'Predicted', type: 'scatter' }
+                ];
+                layout = { title: 'Decision Tree Classifier', xaxis: { title: 'X' }, yaxis: { title: 'Class' } };
+            }
+
+            Plotly.newPlot('plot', data, layout);
+        }
+
+        // Initialize with Linear Regression plot
+        updatePlot();
+    </script>
+</body>
+</html>
